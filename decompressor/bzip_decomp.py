@@ -4,7 +4,7 @@ import shutil
 import datetime
 
 filename = input("Enter filename: ")
-decompressed_filename = 'decomp_' + os.path.splitext(filename)[0] + '.rtf'
+decompressed_filename = 'decomp_' + os.path.splitext(filename)[0]
 
 start_time = datetime.datetime.now()
 
