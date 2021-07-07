@@ -2,22 +2,22 @@ import socket, os, datetime, shutil, tqdm, sys
 
 import bz2
 import gzip as gz
+import lzma as lz
 
-from lz77 import LZ77Compressor
-
-def lz77(filename):
-    compressed_filename = filename + '.lz'
+def lzma(filename):
+    compressed_filename = filename + '.xz'
 
     start_time = datetime.datetime.now()
 
-    # os.system(f'gzip -k {filename}')
-
-    compressor = LZ77Compressor()
-    compressor.compress(filename, compressed_filename)
+    with open(filename, 'rb') as data:
+        lzcontents = lz.compress(data.read())
+        fh = open(compressed_filename, "wb")
+        fh.write(lzcontents)
+        fh.close()
 
     end_time = datetime.datetime.now()
     time_elapsed = end_time - start_time
-    print(f'File: {filename}\nCompression algorithm: LZ77\nCompression time: ' + str(time_elapsed) + 's')
+    print(f'File: {filename}\nCompression algorithm: LZMA\nCompression time: ' + str(time_elapsed) + 's')
 
 def lzw(filename):
     start_time = datetime.datetime.now()
@@ -80,17 +80,17 @@ if __name__ == '__main__':
             input("Press any key to conitnue...")
             os.system('clear')
             print(f'File to compress: {filename} ({og_file_size} B)')
-            print("Compression algorithms:\n1. LZ77\n2. LZW\n3. bzip2\n4. gzip")
+            print("Compression algorithms:\n1. LZMA\n2. LZW\n3. bzip2\n4. gzip")
             choice = input("Choice: ")
 
             compressed_file = ''
             if choice == '1':
                 os.system('clear')
-                lz77(filename)
-                cp_file_size = os.path.getsize(filename + '.lz')
+                lzma(filename)
+                cp_file_size = os.path.getsize(filename + '.xz')
                 print(f'Original size: {og_file_size} B\nCompressed size: {cp_file_size} B')
                 input('Press any key to continue...')
-                compressed_file = filename + '.lz'
+                compressed_file = filename + '.xz'
 
             elif choice == '2':
                 os.system('clear')
