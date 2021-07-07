@@ -3,6 +3,7 @@ import socket, os, datetime, shutil, tqdm, sys
 import bz2
 import gzip as gz
 import lzma as lz
+from lec import LECAlgorithm
 
 def lzma(filename):
     compressed_filename = filename + '.xz'
@@ -50,6 +51,18 @@ def gzip(filename):
     time_elapsed = end_time - start_time
     print(f'File: {filename}\nCompression algorithm: gzip\nCompression time: ' + str(time_elapsed) + 's')
 
+def lec(filename):
+    compressed_filename = filename + '.lec'
+
+    start_time = datetime.datetime.now()
+
+    compressor = LECAlgorithm()
+    compressor.compress(filename, compressed_filename)
+    
+    end_time = datetime.datetime.now()
+    time_elapsed = end_time - start_time
+    print(f'File: {filename}\nCompression algorithm: LEC\nCompression time: ' + str(time_elapsed) + 's')
+
 if __name__ == '__main__':
     try:
         SEPARATOR = "<SEPARATOR>"
@@ -80,7 +93,7 @@ if __name__ == '__main__':
             input("Press any key to conitnue...")
             os.system('clear')
             print(f'File to compress: {filename} ({og_file_size} B)')
-            print("Compression algorithms:\n1. LZMA\n2. LZW\n3. bzip2\n4. gzip")
+            print("Compression algorithms:\n1. LZMA\n2. LZW\n3. bzip2\n4. gzip\n5. lec")
             choice = input("Choice: ")
 
             compressed_file = ''
@@ -119,6 +132,13 @@ if __name__ == '__main__':
                 print(f'Original size: {og_file_size} B\nCompressed size: {cp_file_size} B')
                 input('Press any key to continue...')
                 compressed_file = filename + '.gz'
+            elif choice == '5':
+                os.system('clear')
+                lec(filename)
+                cp_file_size = os.path.getsize(filename + '.lec')
+                print(f'Original size: {og_file_size} B\nCompressed size: {cp_file_size} B')
+                input('Press any key to continue...')
+                compressed_file = filename + '.lec'
         except:
             print("[+] File not found.")
             input("Press any key to continue...")
