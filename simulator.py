@@ -1,4 +1,4 @@
-import socket, os, datetime, shutil, tqdm, sys
+import serial, os, datetime, shutil, tqdm, sys
 
 import bz2
 import gzip as gz
@@ -63,27 +63,21 @@ def lec(filename):
     time_elapsed = end_time - start_time
     print(f'File: {filename}\nCompression algorithm: LEC\nCompression time: ' + str(time_elapsed) + 's')
 
-if __name__ == '__main__':
+def main():
     try:
         SEPARATOR = "<SEPARATOR>"
         BUFFER_SIZE = 4096 # send 4096 bytes each time step
 
-        client = None
-
         try:
-            SERVER = "127.0.0.1"
-            PORT = 42069
-            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            client.connect((SERVER, PORT))
-            print(f"[+] Connecting to {SERVER}:{PORT}.")
-            print("[+] Connected.")
+            xbee = serial.Serial('COM4', 9600)
+            print("[+] Connected to XBee.")
             input("Press any key to continue...")
             os.system('clear')
 
         except:
-            print(f"[+] Cannot connect to peer on {SERVER}:{PORT}.")
+            print(f"[-] Cannot connect to XBee.")
             input("Press any key to continue...")
-            # sys.exit()
+            sys.exit(0)
 
 
         try:
@@ -145,7 +139,7 @@ if __name__ == '__main__':
 
         file_size = os.path.getsize(compressed_file)
 
-        client.send(f"{compressed_file}{SEPARATOR}{file_size}".encode())
+        xbee.write(f"{compressed_file}{SEPARATOR}{file_size}\n".encode())
 
         progress = tqdm.tqdm(range(file_size), f"Sending {compressed_file}", unit="B", unit_scale=True, unit_divisor=1024)
         with open(compressed_file, "rb") as f:
@@ -153,9 +147,17 @@ if __name__ == '__main__':
                 bytes_read = f.read(BUFFER_SIZE)
                 if not bytes_read:
                     break
-                client.sendall(bytes_read)
+                xbee.write(bytes_read)
                 progress.update(len(bytes_read))
-        client.close()
+        xbee.close()
     except Exception as e:
         print(e)
         sys.exit()
+
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        print ('Interrupted')
+        xbee.close()
+        sys.exit(0)
