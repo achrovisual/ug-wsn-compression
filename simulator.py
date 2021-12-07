@@ -1,67 +1,10 @@
 import socket, os, datetime, shutil, tqdm, sys
 
-import bz2
-import gzip as gz
-import lzma as lz
-from lec import LECAlgorithm
-
-def lzma(filename):
-    compressed_filename = filename + '.xz'
-
-    start_time = datetime.datetime.now()
-
-    with open(filename, 'rb') as data:
-        lzcontents = lz.compress(data.read())
-        fh = open(compressed_filename, "wb")
-        fh.write(lzcontents)
-        fh.close()
-
-    end_time = datetime.datetime.now()
-    time_elapsed = end_time - start_time
-    print(f'File: {filename}\nCompression algorithm: LZMA\nCompression time: ' + str(time_elapsed) + 's')
-
-def lzw(filename):
-    start_time = datetime.datetime.now()
-    os.system(f'compress {filename}')
-    end_time = datetime.datetime.now()
-    time_elapsed = end_time - start_time
-    print(f'File: {filename}\nCompression algorithm: LZW\nCompression time: ' + str(time_elapsed) + 's')
-
-def bzip2(filename):
-    compressed_filename = filename + '.bz2'
-
-    start_time = datetime.datetime.now()
-    with open(filename, 'rb') as data:
-        tarbz2contents = bz2.compress(data.read(), 9)
-        fh = open(compressed_filename, "wb")
-        fh.write(tarbz2contents)
-        fh.close()
-    end_time = datetime.datetime.now()
-    time_elapsed = end_time - start_time
-    print(f'File: {filename}\nCompression algorithm: bzip2\nCompression time: ' + str(time_elapsed) + 's')
-
-def gzip(filename):
-    compressed_filename = filename + '.gz'
-
-    start_time = datetime.datetime.now()
-    with open(filename, 'rb') as file_in:
-        with gz.open(compressed_filename, 'wb') as file_out:
-            shutil.copyfileobj(file_in, file_out)
-    end_time = datetime.datetime.now()
-    time_elapsed = end_time - start_time
-    print(f'File: {filename}\nCompression algorithm: gzip\nCompression time: ' + str(time_elapsed) + 's')
-
-def lec(filename):
-    compressed_filename = filename + '.lec'
-
-    start_time = datetime.datetime.now()
-
-    compressor = LECAlgorithm()
-    compressor.compress(filename, compressed_filename)
-    
-    end_time = datetime.datetime.now()
-    time_elapsed = end_time - start_time
-    print(f'File: {filename}\nCompression algorithm: LEC\nCompression time: ' + str(time_elapsed) + 's')
+from lzma_compressor import LZMA_Compressor
+from lzw_compressor import LZW_Compressor
+from lec_compressor import LEC_Compressor
+from bzip2_compressor import bzip2_Compressor
+from gzip_compressor import Gzip_Compressor
 
 if __name__ == '__main__':
     try:
@@ -69,6 +12,12 @@ if __name__ == '__main__':
         BUFFER_SIZE = 4096 # send 4096 bytes each time step
 
         client = None
+
+        lzma_comp = LZMA_Compressor()
+        lzw_comp = LZW_Compressor()
+        lec_comp = LEC_Compressor()
+        bzip2_comp = bzip2_Compressor()
+        gzip_comp = Gzip_Compressor()
 
         try:
             SERVER = "127.0.0.1"
@@ -99,47 +48,37 @@ if __name__ == '__main__':
             compressed_file = ''
             if choice == '1':
                 os.system('clear')
-                lzma(filename)
-                cp_file_size = os.path.getsize(filename + '.xz')
-                print(f'Original size: {og_file_size} B\nCompressed size: {cp_file_size} B')
+                lzma_comp.compress(filename)
                 input('Press any key to continue...')
                 compressed_file = filename + '.xz'
 
             elif choice == '2':
                 os.system('clear')
-                lzw(filename)
+                lzw_comp.compress(filename)
                 try:
                     cp_file_size = os.path.getsize(filename + '.Z')
-                    print(f'Original size: {og_file_size} B\nCompressed size: {cp_file_size} B')
                     input('Press any key to continue...')
                 except:
                     print('File is left uncompressed.')
                     input('Press any key to continue...')
-
                 compressed_file = filename + '.Z'
-
             elif choice == '3':
                 os.system('clear')
-                bzip2(filename)
-                cp_file_size = os.path.getsize(filename + '.bz2')
-                print(f'Original size: {og_file_size} B\nCompressed size: {cp_file_size} B')
+                bzip2_comp.compress(filename)
                 input('Press any key to continue...')
                 compressed_file = filename + '.bz2'
             elif choice == '4':
                 os.system('clear')
-                gzip(filename)
-                cp_file_size = os.path.getsize(filename + '.gz')
-                print(f'Original size: {og_file_size} B\nCompressed size: {cp_file_size} B')
+                gzip_comp.compress(filename)
                 input('Press any key to continue...')
                 compressed_file = filename + '.gz'
             elif choice == '5':
                 os.system('clear')
-                lec(filename)
-                cp_file_size = os.path.getsize(filename + '.lec')
-                print(f'Original size: {og_file_size} B\nCompressed size: {cp_file_size} B')
+                lec_comp.compress(filename)
                 input('Press any key to continue...')
                 compressed_file = filename + '.lec'
-        except:
+        except Exception as e:
+            print(e)
             print("[+] File not found.")
             input("Press any key to continue...")
 
