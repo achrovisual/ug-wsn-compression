@@ -1,8 +1,31 @@
 from os import system
-import psutil, threading
+import psutil, threading, hashlib
 
 def ratio(before, after):
     return 100 * (1 - (after / before))
+
+def integrity(before, after):
+    md5_before = None
+    md5_after = None
+    # Open,close, read file and calculate MD5 on its contents
+    with open(before) as file_to_check:
+        # read contents of the file
+        data = file_to_check.read()
+        # pipe contents of the file through
+        md5_before = hashlib.md5(data.encode("utf8")).hexdigest()
+
+    with open(after) as file_to_check:
+        # read contents of the file
+        data = file_to_check.read()
+        # pipe contents of the file through
+        md5_after = hashlib.md5(data.encode("utf8")).hexdigest()
+
+    # Finally compare original MD5 with freshly calculated
+    if md5_before == md5_after:
+        print("MD5 verified.")
+    else:
+        print("MD5 verification failed!.")
+
 
 def performance_metrics():
     global running
