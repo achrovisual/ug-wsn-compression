@@ -1,12 +1,14 @@
 from datetime import datetime
 from os.path import exists
+from numpy import mean
 
 class Compressor:
-    def log(self, filename, compression_time, original_size, compressed_size, compression_ratio):
-        # , compression_time, system_utilization, compression_ratio, data_integrity
+    def log(self, filename, compression_time, original_size, compressed_size, compression_ratio, system_utilization):
+        cpu_usage = mean(system_utilization[0])
+        memory_usage = mean(system_utilization[1])
         index = len(self.history)
         log_time = datetime.now()
-        log_message = "[%d] %s - Compressed %s using %s. Time elapsed: %ss. Original size: %s B. Compressed size: %s B. Compression ratio: %.2f%%.\n" % (index, log_time, filename, self.name, compression_time, original_size, compressed_size, compression_ratio)
+        log_message = "[%d] %s - Compressed %s using %s. Time elapsed: %ss. Original size: %s B. Compressed size: %s B. Compression ratio: %.2f%%. CPU usage: %.2f%%. Memory usage: %.2f%%.\n" % (index, log_time, filename, self.name, compression_time, original_size, compressed_size, compression_ratio, cpu_usage, memory_usage)
         self.history.append(log_message)
 
         date = log_time.strftime("%d-%m-%Y")
