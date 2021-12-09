@@ -55,15 +55,18 @@ class LECAlgorithm:
     countBits = len(output_buffer)
     missBits = output_buffer.fill()
     output_buffer[countBits:countBits+missBits] = True
-    if output_file_path:
-      try:
-        with open(output_file_path, 'wb') as output_file:
-          output_file.write(output_buffer.tobytes())
-          print('File was compressed successfully and saved to output path ...')
-          return None
-      except IOError:
-        print('Could not write to output file path. Please check if the path is correct ...')
-        raise
+    if os.path.getsize(input_file_path) > len(output_buffer)/8:
+      if output_file_path:
+        try:
+          with open(output_file_path, 'wb') as output_file:
+            output_file.write(output_buffer.tobytes())
+            print('File was compressed successfully and saved to output path ...')
+            return None
+        except IOError:
+          print('Could not write to output file path. Please check if the path is correct ...')
+          raise
+    else:
+      return None
 
     # an output file path was not provided, return the compressed data
     return output_buffer
