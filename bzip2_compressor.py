@@ -1,4 +1,5 @@
-import bz2, pyRAPL
+# import bz2, pyRAPL
+import bz2
 from datetime import datetime
 from os.path import getsize
 
@@ -11,9 +12,9 @@ class bzip2_Compressor(Compressor):
         self.history = []
     def compress(self, filename):
         start()
-        pyRAPL.setup()
-        meter = pyRAPL.Measurement('bar')
-        meter.begin()
+        # pyRAPL.setup()
+        # meter = pyRAPL.Measurement('bar')
+        # meter.begin()
         try:
             compressed_filename = filename + '.bz2'
 
@@ -33,9 +34,11 @@ class bzip2_Compressor(Compressor):
 
             compression_ratio = ratio(og_size, cp_size)
         finally:
-            meter.end()
+            # meter.end()
             result = stop()
-            result.append((meter.result.pkg[0]/1000000)/(meter.result.duration/1000000))
-            result.append((meter.result.dram[0]/1000000)/(meter.result.duration/1000000))
+            # result.append((meter.result.pkg[0]/1000000)/(meter.result.duration/1000000))
+            # result.append((meter.result.dram[0]/1000000)/(meter.result.duration/1000000))
+            result.append(0)
+            result.append(0)
             
             self.log(filename, time_elapsed, og_size, cp_size, compression_ratio, result)
