@@ -4,6 +4,7 @@ from lzw_compressor import LZW_Compressor
 from lec_compressor import LEC_Compressor
 from bzip2_compressor import bzip2_Compressor
 from gzip_compressor import Gzip_Compressor
+from performance_metrics import integrity
 
 def clrscr():
     if os.name == 'nt':
@@ -103,10 +104,12 @@ def main():
             input('Press any key to continue...')
 
         if compressed_file == filename: # Compression failed
-            xbee.write(f'{compressed_file}{SEPARATOR}{og_file_size}\n'.encode())
+            md5 = integrity(filename)
+            xbee.write(f'{compressed_file}{SEPARATOR}{og_file_size}{SEPARATOR}{md5}\n'.encode())
             progress = tqdm.tqdm(range(og_file_size), f"Sending {compressed_file}", unit="B", unit_scale=True, unit_divisor=1024)
         else:
-            xbee.write(f'{compressed_file}{SEPARATOR}{cp_file_size}\n'.encode())
+            md5 = integrity(compressed_file)
+            xbee.write(f'{compressed_file}{SEPARATOR}{cp_file_size}{SEPARATOR}{md5}\n'.encode())
             progress = tqdm.tqdm(range(cp_file_size), f"Sending {compressed_file}", unit="B", unit_scale=True, unit_divisor=1024)
         
         with open(compressed_file, 'rb') as f:

@@ -1,19 +1,31 @@
-import gzip
-import os
-import shutil
-import datetime
+# import gzip, shutil, pyRAPL
+import gzip, shutil, sys, os
+from datetime import datetime
+from os.path import getsize
+from decompressor import Decompressor
+sys.path.append('C:\\Users\\JKGC\\Desktop\\ug-wsn-compression')
+from performance_metrics import ratio, start, stop
 
-filename = input("Enter filename: ")
-decompressed_filename = 'decomp_' + os.path.splitext(filename)[0]
+class Gzip_Decompressor(Decompressor):
+    def __init__(self):
+        self.name = 'Gzip'
+        self.history = []
+    def decompress(self, filename):
+        try:
+            # decompressed_filename = self.name + '_' + os.path.splitext(filename)[0]
+            decompressed_filename = os.path.splitext(filename)[0]
+            start_time = datetime.now()
 
-start_time = datetime.datetime.now()
+            with gzip.open(filename, 'rb') as file_input:
+                with open(decompressed_filename, 'wb') as file_output:
+                    shutil.copyfileobj(file_input, file_output)
 
-with gzip.open(filename, 'rb') as file_input:
-    with open(decompressed_filename, 'wb') as file_output:
-        shutil.copyfileobj(file_input, file_output)
+            end_time = datetime.now()
+            time_elapsed = end_time - start_time
 
-end_time = datetime.datetime.now()
+            og_size = getsize(decompressed_filename)
+            cp_size = getsize(filename)
 
-time_elapsed = end_time - start_time
-
-input('Time elapsed: ' + str(time_elapsed) + 's')
+            compression_ratio = ratio(og_size, cp_size)
+        finally:
+            self.log(filename, time_elapsed, og_size, cp_size, compression_ratio)

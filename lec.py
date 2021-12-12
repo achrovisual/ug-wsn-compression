@@ -1,3 +1,4 @@
+import os
 import math
 import json
 from bitarray import bitarray
