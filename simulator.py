@@ -107,9 +107,9 @@ def main():
             md5 = integrity(filename)
             print(md5)
             xbee.write(f'{compressed_file}{SEPARATOR}{og_file_size}{SEPARATOR}{md5}\n'.encode())
-            progress = tqdm.tqdm(range(og_file_size), f"Sending {compressed_file}", unit="B", unit_scale=True, unit_divisor=1024)
+            progress = tqdm.tqdm(range(og_file_size), f"Sending {filename}", unit="B", unit_scale=True, unit_divisor=1024)
         else:
-            md5 = integrity(compressed_file)
+            md5 = integrity(filename)
             print(md5)
             xbee.write(f'{compressed_file}{SEPARATOR}{cp_file_size}{SEPARATOR}{md5}\n'.encode())
             progress = tqdm.tqdm(range(cp_file_size), f"Sending {compressed_file}", unit="B", unit_scale=True, unit_divisor=1024)
