@@ -14,7 +14,7 @@ print(f'[+] Connected to Xbee.')
 while True:
     if xbee.in_waiting > 0:
         break
-received = xbee.readline().decode()
+received = xbee.readline().decode()[:-1]
 filename, filesize, md5 = received.split(SEPARATOR)
 filename = os.path.basename(filename)
 filesize = int(filesize)
@@ -64,6 +64,7 @@ elif 'lec' in ext:
     decompressed_filename = os.path.splitext(filename)[0]
     md5_decomp = integrity(decompressed_filename)
 
+print()
 print(md5)
 print(md5_decomp)
 if md5 == md5_decomp:
