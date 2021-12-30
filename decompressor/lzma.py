@@ -1,15 +1,14 @@
-# import shutil, pyRAPL
+# import pyRAPL
 import shutil, sys, os
+import lzma as lz
 from datetime import datetime
 from os.path import getsize
-from decompressor import Decompressor
-sys.path.append('C:\\Users\\JKGC\\Desktop\\ug-wsn-compression')
+from .decompressor import Decompressor
 from performance_metrics import ratio, start, stop
-from lec import LECAlgorithm
 
-class LEC_Decompressor(Decompressor):
+class LZMA(Decompressor):
     def __init__(self):
-        self.name = 'LEC'
+        self.name = 'LZMA'
         self.history = []
     def decompress(self, filename):
         try:
@@ -17,7 +16,12 @@ class LEC_Decompressor(Decompressor):
             decompressed_filename = os.path.splitext(filename)[0]
             start_time = datetime.now()
 
-            LECAlgorithm().decompress(filename, decompressed_filename)
+            with open(filename, 'rb') as data:
+                lzcontents = lz.decompress(data.read())
+
+                fh = open(decompressed_filename, "wb")
+                fh.write(lzcontents)
+                fh.close()
 
             end_time = datetime.now()
             time_elapsed = end_time - start_time

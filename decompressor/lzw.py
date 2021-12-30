@@ -1,14 +1,13 @@
-# import gzip, shutil, pyRAPL
-import gzip, shutil, sys, os
+# import pyRAPL
+import shutil, sys, os
 from datetime import datetime
 from os.path import getsize
-from decompressor import Decompressor
-sys.path.append('C:\\Users\\JKGC\\Desktop\\ug-wsn-compression')
+from .decompressor import Decompressor
 from performance_metrics import ratio, start, stop
 
-class Gzip_Decompressor(Decompressor):
+class LZW(Decompressor):
     def __init__(self):
-        self.name = 'Gzip'
+        self.name = 'LZW'
         self.history = []
     def decompress(self, filename):
         try:
@@ -16,9 +15,7 @@ class Gzip_Decompressor(Decompressor):
             decompressed_filename = os.path.splitext(filename)[0]
             start_time = datetime.now()
 
-            with gzip.open(filename, 'rb') as file_input:
-                with open(decompressed_filename, 'wb') as file_output:
-                    shutil.copyfileobj(file_input, file_output)
+            os.system("uncompress %s" % filename)
 
             end_time = datetime.now()
             time_elapsed = end_time - start_time

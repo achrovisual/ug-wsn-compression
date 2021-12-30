@@ -4,7 +4,7 @@ import numpy as np
 
 filename = input("Enter filename for compression: ")
 
-normalizedFilename = './normalized/normalized.csv'
+normalizedFilename = './normalized.csv'
 ext = os.path.splitext(filename)[-1].lower()
 try:
     if 'xls' in ext:

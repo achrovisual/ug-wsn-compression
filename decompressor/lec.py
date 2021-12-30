@@ -1,14 +1,14 @@
-# import bz2, shutil, pyRAPL
-import bz2, shutil, sys, os
+# import pyRAPL
+import shutil, sys, os
 from datetime import datetime
 from os.path import getsize
-from decompressor import Decompressor
-sys.path.append('C:\\Users\\JKGC\\Desktop\\ug-wsn-compression')
+from .decompressor import Decompressor
 from performance_metrics import ratio, start, stop
+from algorithm.lec import LECAlgorithm
 
-class bzip2_Decompressor(Decompressor):
+class LEC(Decompressor):
     def __init__(self):
-        self.name = 'bzip2'
+        self.name = 'LEC'
         self.history = []
     def decompress(self, filename):
         try:
@@ -16,12 +16,7 @@ class bzip2_Decompressor(Decompressor):
             decompressed_filename = os.path.splitext(filename)[0]
             start_time = datetime.now()
 
-            with open(filename, 'rb') as data:
-                tarbz2contents = bz2.decompress(data.read())
-
-                fh = open(decompressed_filename, "wb")
-                fh.write(tarbz2contents)
-                fh.close()
+            LECAlgorithm().decompress(filename, decompressed_filename)
 
             end_time = datetime.now()
             time_elapsed = end_time - start_time

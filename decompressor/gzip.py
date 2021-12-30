@@ -1,15 +1,13 @@
-# import shutil, pyRAPL
-import shutil, sys, os
-import lzma as lz
+# import pyRAPL
+import gzip, shutil, sys, os
 from datetime import datetime
 from os.path import getsize
-from decompressor import Decompressor
-sys.path.append('C:\\Users\\JKGC\\Desktop\\ug-wsn-compression')
+from .decompressor import Decompressor
 from performance_metrics import ratio, start, stop
 
-class LZMA_Decompressor(Decompressor):
+class Gzip(Decompressor):
     def __init__(self):
-        self.name = 'LZMA'
+        self.name = 'Gzip'
         self.history = []
     def decompress(self, filename):
         try:
@@ -17,12 +15,9 @@ class LZMA_Decompressor(Decompressor):
             decompressed_filename = os.path.splitext(filename)[0]
             start_time = datetime.now()
 
-            with open(filename, 'rb') as data:
-                lzcontents = lz.decompress(data.read())
-
-                fh = open(decompressed_filename, "wb")
-                fh.write(lzcontents)
-                fh.close()
+            with gzip.open(filename, 'rb') as file_input:
+                with open(decompressed_filename, 'wb') as file_output:
+                    shutil.copyfileobj(file_input, file_output)
 
             end_time = datetime.now()
             time_elapsed = end_time - start_time

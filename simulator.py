@@ -1,9 +1,9 @@
 import serial, os, datetime, shutil, tqdm, sys
-from lzma_compressor import LZMA_Compressor
-from lzw_compressor import LZW_Compressor
-from lec_compressor import LEC_Compressor
-from bzip2_compressor import bzip2_Compressor
-from gzip_compressor import Gzip_Compressor
+from compressor.lzma import LZMA
+from compressor.lzw import LZW
+from compressor.lec import LEC
+from compressor.bzip2 import bzip2
+from compressor.gzip import Gzip
 from performance_metrics import integrity
 
 def clrscr():
@@ -19,11 +19,11 @@ def main():
         SEPARATOR = '<SEPARATOR>'
         BUFFER_SIZE = 4096 # send 4096 bytes each time step
 
-        lzma_comp = LZMA_Compressor()
-        lzw_comp = LZW_Compressor()
-        lec_comp = LEC_Compressor()
-        bzip2_comp = bzip2_Compressor()
-        gzip_comp = Gzip_Compressor()
+        lzma_comp = LZMA()
+        lzw_comp = LZW()
+        lec_comp = LEC()
+        bzip2_comp = bzip2()
+        gzip_comp = Gzip()
         
         try:
             xbee = serial.Serial('COM4', 9600)
@@ -105,10 +105,12 @@ def main():
 
         if compressed_file == filename: # Compression failed
             md5 = integrity(filename)
+            print(md5)
             xbee.write(f'{compressed_file}{SEPARATOR}{og_file_size}{SEPARATOR}{md5}\n'.encode())
             progress = tqdm.tqdm(range(og_file_size), f"Sending {compressed_file}", unit="B", unit_scale=True, unit_divisor=1024)
         else:
             md5 = integrity(compressed_file)
+            print(md5)
             xbee.write(f'{compressed_file}{SEPARATOR}{cp_file_size}{SEPARATOR}{md5}\n'.encode())
             progress = tqdm.tqdm(range(cp_file_size), f"Sending {compressed_file}", unit="B", unit_scale=True, unit_divisor=1024)
         

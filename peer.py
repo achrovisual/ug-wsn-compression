@@ -1,11 +1,9 @@
 import os, sys, serial, tqdm
-sys.path.append('C:\\Users\\JKGC\\Desktop\\ug-wsn-compression\\decompressor')
-from bzip_decomp import bzip2_Decompressor
-from gzip_decomp import Gzip_Decompressor
-from lec_decomp import LEC_Decompressor
-from lzma_decomp import LZMA_Decompressor
-from lzw_decomp import LZW_Decompressor
-sys.path.append('C:\\Users\\JKGC\\Desktop\\ug-wsn-compression')
+from decompressor.bzip import bzip2
+from decompressor.gzip import Gzip
+from decompressor.lec import LEC
+from decompressor.lzma import LZMA
+from decompressor.lzw import LZW
 from performance_metrics import integrity
 
 SEPARATOR = "<SEPARATOR>"

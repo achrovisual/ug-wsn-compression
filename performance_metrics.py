@@ -1,6 +1,6 @@
-from os import system
+from os import environ
 import psutil, threading, hashlib
-
+environ["PYTHONHASHSEED"] = '1234'
 def ratio(before, after):
     return 100 * (1 - (after / before))
 

@@ -1,32 +1,28 @@
 # import pyRAPL
 from datetime import datetime
 from os.path import getsize
+from os import system
 
-from compressor import Compressor
-from lec import LECAlgorithm
-from performance_metrics import ratio, start, stop
+from .compressor import Compressor
+from performance_metrics import ratio, start_system_wide, stop
 
-class LEC_Compressor(Compressor):
+class LZW(Compressor):
     def __init__(self):
-        self.name = 'LEC'
+        self.name = 'LZW'
         self.history = []
     def compress(self, filename):
-        start()
+        start_system_wide()
         # pyRAPL.setup()
         # meter = pyRAPL.Measurement('bar')
         # meter.begin()
         try:
-            compressed_filename = filename + '.lec'
-
+            compressed_filename = filename + '.Z'
+            og_size = getsize(filename)
             start_time = datetime.now()
-
-            compressor = LECAlgorithm()
-            compressor.compress(filename, compressed_filename)
-
+            system(f"compress '{filename}'")
             end_time = datetime.now()
             time_elapsed = end_time - start_time
 
-            og_size = getsize(filename)
             cp_size = getsize(compressed_filename)
 
             compression_ratio = ratio(og_size, cp_size)

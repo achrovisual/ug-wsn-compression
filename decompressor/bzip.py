@@ -1,14 +1,13 @@
-# import shutil, pyRAPL
-import shutil, sys, os
+# import pyRAPL
+import bz2, shutil, sys, os
 from datetime import datetime
 from os.path import getsize
-from decompressor import Decompressor
-sys.path.append('C:\\Users\\JKGC\\Desktop\\ug-wsn-compression')
+from .decompressor import Decompressor
 from performance_metrics import ratio, start, stop
 
-class LZW_Decompressor(Decompressor):
+class bzip2(Decompressor):
     def __init__(self):
-        self.name = 'LZW'
+        self.name = 'bzip2'
         self.history = []
     def decompress(self, filename):
         try:
@@ -16,7 +15,12 @@ class LZW_Decompressor(Decompressor):
             decompressed_filename = os.path.splitext(filename)[0]
             start_time = datetime.now()
 
-            os.system("uncompress %s" % filename)
+            with open(filename, 'rb') as data:
+                tarbz2contents = bz2.decompress(data.read())
+
+                fh = open(decompressed_filename, "wb")
+                fh.write(tarbz2contents)
+                fh.close()
 
             end_time = datetime.now()
             time_elapsed = end_time - start_time
