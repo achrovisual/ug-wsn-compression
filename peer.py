@@ -34,31 +34,31 @@ with open(filename, "wb") as f:
     xbee.close()
     
 if 'xz' in ext:
-    lzma_comp = LZMA_Decompressor()
+    lzma_comp = LZMA()
     lzma_comp.decompress(filename)
     # decompressed_filename = 'LZMA_' + os.path.splitext(filename)[0]
     decompressed_filename = os.path.splitext(filename)[0]
     md5_decomp = integrity(decompressed_filename)
 elif 'bz2' in ext:
-    bzip2_comp = bzip2_Decompressor()
+    bzip2_comp = bzip2()
     bzip2_comp.decompress(filename)
     # decompressed_filename = 'bzip2_' + os.path.splitext(filename)[0]
     decompressed_filename = os.path.splitext(filename)[0]
     md5_decomp = integrity(decompressed_filename)
 elif 'gz' in ext:
-    gzip_comp = Gzip_Decompressor()
+    gzip_comp = Gzip()
     gzip_comp.decompress(filename)
     # decompressed_filename = 'Gzip_' + os.path.splitext(filename)[0]
     decompressed_filename = os.path.splitext(filename)[0]
     md5_decomp = integrity(decompressed_filename)
 elif 'z' in ext:
-    lzw_comp = LZW_Decompressor()
+    lzw_comp = LZW()
     lzw_comp.decompress(filename)
     # decompressed_filename = 'LZW_' + os.path.splitext(filename)[0]
     decompressed_filename = os.path.splitext(filename)[0]
     md5_decomp = integrity(decompressed_filename)
 elif 'lec' in ext:
-    lec_comp = LEC_Decompressor()
+    lec_comp = LEC()
     lec_comp.decompress(filename)
     # decompressed_filename = 'LEC_' + os.path.splitext(filename)[0]
     decompressed_filename = os.path.splitext(filename)[0]
