@@ -1,4 +1,3 @@
-# import pyRAPL
 import shutil, sys, os
 from datetime import datetime
 from os.path import getsize
@@ -11,7 +10,6 @@ class LZW(Decompressor):
         self.history = []
     def decompress(self, filename):
         try:
-            # decompressed_filename = self.name + '_' + os.path.splitext(filename)[0]
             decompressed_filename = os.path.splitext(filename)[0]
             start_time = datetime.now()
 

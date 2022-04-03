@@ -1,5 +1,4 @@
-# import pyRAPL
-import gzip, shutil
+import gzip, shutil, platform, pyRAPL
 from datetime import datetime
 from os.path import getsize
 
@@ -12,9 +11,11 @@ class Gzip(Compressor):
         self.history = []
     def compress(self, filename):
         start()
-        # pyRAPL.setup()
-        # meter = pyRAPL.Measurement('bar')
-        # meter.begin()
+        if 'Intel' in platform.processor():
+            pyRAPL.setup()
+            print('out')
+            meter = pyRAPL.Measurement('bar')
+            meter.begin()
         try:
             compressed_filename = filename + '.gz'
 
@@ -32,11 +33,18 @@ class Gzip(Compressor):
 
             compression_ratio = ratio(og_size, cp_size)
         finally:
-            # meter.end()
+            if 'Intel' in platform.processor():
+                print('in')
+                meter.end()
+                print('out')
             result = stop()
-            # result.append((meter.result.pkg[0]/1000000)/(meter.result.duration/1000000))
-            # result.append((meter.result.dram[0]/1000000)/(meter.result.duration/1000000))
-            result.append(0)
-            result.append(0)
+            if 'Intel' in platform.processor():
+                print('in')
+                result.append((meter.result.pkg[0]/1000000)/(meter.result.duration/1000000))
+                result.append((meter.result.dram[0]/1000000)/(meter.result.duration/1000000))
+                print('out')
+            else:
+                result.append(0)
+                result.append(0)
 
             self.log(filename, time_elapsed, og_size, cp_size, compression_ratio, result)
