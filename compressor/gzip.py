@@ -13,7 +13,6 @@ class Gzip(Compressor):
         start()
         if 'Intel' in platform.processor():
             pyRAPL.setup()
-            print('out')
             meter = pyRAPL.Measurement('bar')
             meter.begin()
         try:
@@ -34,15 +33,11 @@ class Gzip(Compressor):
             compression_ratio = ratio(og_size, cp_size)
         finally:
             if 'Intel' in platform.processor():
-                print('in')
                 meter.end()
-                print('out')
             result = stop()
             if 'Intel' in platform.processor():
-                print('in')
                 result.append((meter.result.pkg[0]/1000000)/(meter.result.duration/1000000))
                 result.append((meter.result.dram[0]/1000000)/(meter.result.duration/1000000))
-                print('out')
             else:
                 result.append(0)
                 result.append(0)

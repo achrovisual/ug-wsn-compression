@@ -12,9 +12,10 @@ class LZW(Compressor):
         self.history = []
     def compress(self, filename):
         start_system_wide()
-        # pyRAPL.setup()
-        # meter = pyRAPL.Measurement('bar')
-        # meter.begin()
+        if 'Intel' in platform.processor():
+            pyRAPL.setup()
+            meter = pyRAPL.Measurement('bar')
+            meter.begin()
         try:
             compressed_filename = filename + '.Z'
             og_size = getsize(filename)
@@ -27,11 +28,14 @@ class LZW(Compressor):
 
             compression_ratio = ratio(og_size, cp_size)
         finally:
-            # meter.end()
+            if 'Intel' in platform.processor():
+                meter.end()
             result = stop()
-            # result.append((meter.result.pkg[0]/1000000)/(meter.result.duration/1000000))
-            # result.append((meter.result.dram[0]/1000000)/(meter.result.duration/1000000))
-            result.append(0)
-            result.append(0)
+            if 'Intel' in platform.processor():
+                result.append((meter.result.pkg[0]/1000000)/(meter.result.duration/1000000))
+                result.append((meter.result.dram[0]/1000000)/(meter.result.duration/1000000))
+            else:
+                result.append(0)
+                result.append(0)
 
             self.log(filename, time_elapsed, og_size, cp_size, compression_ratio, result)
