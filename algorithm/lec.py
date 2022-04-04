@@ -67,6 +67,7 @@ class LECAlgorithm:
           print('Could not write to output file path. Please check if the path is correct ...')
           raise
     else:
+      print('Compressing results in higher file size.')
       return None
 
     # an output file path was not provided, return the compressed data
