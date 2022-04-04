@@ -13,13 +13,13 @@ class LZW(Decompressor):
             decompressed_filename = os.path.splitext(filename)[0]
             start_time = datetime.now()
 
+            cp_size = getsize(filename)
             os.system("uncompress %s" % filename)
 
             end_time = datetime.now()
             time_elapsed = end_time - start_time
 
             og_size = getsize(decompressed_filename)
-            cp_size = getsize(filename)
 
             compression_ratio = ratio(og_size, cp_size)
         finally:
