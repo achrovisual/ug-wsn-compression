@@ -1,4 +1,4 @@
-# import pyRAPL
+import platform, pyRAPL
 from datetime import datetime
 from os.path import getsize
 from os import system

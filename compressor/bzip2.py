@@ -1,5 +1,4 @@
-import pyRAPL
-import bz2
+import bz2, platform, pyRAPL
 from datetime import datetime
 from os.path import getsize
 

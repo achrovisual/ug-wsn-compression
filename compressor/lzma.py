@@ -1,5 +1,4 @@
-# import pyRAPL
-import lzma
+import lzma, platform, pyRAPL
 from datetime import datetime
 from os.path import getsize
 
