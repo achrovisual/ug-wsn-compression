@@ -8,7 +8,7 @@ from performance_metrics import integrity
 
 SEPARATOR = "<SEPARATOR>"
 
-xbee = serial.Serial('COM4', 9600)
+xbee = serial.Serial('/dev/ttyUSB0', 9600)
 print(f'[+] Connected to Xbee.')
 
 while True:
