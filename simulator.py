@@ -26,7 +26,7 @@ def main():
         gzip_comp = Gzip()
         
         try:
-            xbee = serial.Serial('COM4', 9600)
+            xbee = serial.Serial('/dev/ttyUSB0', 9600)
             print('[+] Connected to XBee.')
             input('Press any key to continue...')
             clrscr()
@@ -42,7 +42,9 @@ def main():
             input('Press any key to continue...')
             clrscr()
 
+            md5 = integrity(filename)
             print(f'File to compress: {filename} ({og_file_size} B)')
+            print(f'MD5 Hash: {md5}')
             print("Compression algorithms:\n1. LZMA\n2. LZW\n3. bzip2\n4. gzip\n5. lec")
             choice = input("Choice: ")
             compressed_file = ''
@@ -104,13 +106,9 @@ def main():
             input('Press any key to continue...')
 
         if compressed_file == filename: # Compression failed
-            md5 = integrity(filename)
-            print(md5)
-            xbee.write(f'{compressed_file}{SEPARATOR}{og_file_size}{SEPARATOR}{md5}\n'.encode())
+            xbee.write(f'{filename}{SEPARATOR}{og_file_size}{SEPARATOR}{md5}\n'.encode())
             progress = tqdm.tqdm(range(og_file_size), f"Sending {filename}", unit="B", unit_scale=True, unit_divisor=1024)
         else:
-            md5 = integrity(filename)
-            print(md5)
             xbee.write(f'{compressed_file}{SEPARATOR}{cp_file_size}{SEPARATOR}{md5}\n'.encode())
             progress = tqdm.tqdm(range(cp_file_size), f"Sending {compressed_file}", unit="B", unit_scale=True, unit_divisor=1024)
         
