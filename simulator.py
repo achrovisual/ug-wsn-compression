@@ -132,10 +132,12 @@ def main():
                     compressed_file = filename
                     input('Press any key to continue...')
             elif choice == '5':
-                lec_comp.compress(filename)
+                for element in original_data:
+                    # Compress binary string, output is a dictionary containing compressed file size and the data
+                    compressed = lec_comp.compress(filename, element)
                 try:
-                    compressed_file = filename + '.lec'
-                    cp_file_size = os.path.getsize(compressed_file)
+                    # compressed_file = filename + '.lec'
+                    # cp_file_size = os.path.getsize(compressed_file)
                     input('Press any key to continue...')
                 except:
                     print('File is left uncompressed.')
