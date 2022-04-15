@@ -108,10 +108,12 @@ def main():
                     compressed_file = filename
                     input('Press any key to continue...')
             elif choice == '3':
-                bzip2_comp.compress(filename)
+                for element in original_data:
+                    # Compress binary string, output is a dictionary containing compressed file size and the data
+                    compressed = bzip2_comp.compress(filename, element)
                 try:
-                    compressed_file = filename + '.bz2'
-                    cp_file_size = os.path.getsize(compressed_file)
+                    # compressed_file = filename + '.bz2'
+                    # cp_file_size = os.path.getsize(compressed_file)
                     input('Press any key to continue...')
                 except:
                     print('File is left uncompressed.')
