@@ -4,13 +4,17 @@ environ["PYTHONHASHSEED"] = '1234'
 def ratio(before, after):
     return 100 * (1 - (after / before))
 
-def integrity(filename):
+def integrity(filename, data = None):
     md5 = hashlib.md5()
+
     # Open,close, read file and calculate MD5 on its contents
-    with open(filename, "rb") as file_to_check:
-        # read contents of the file
-        for block in iter(lambda: file_to_check.read(4096), b''):
-            md5.update(block)
+    if data == None:
+        with open(filename, "rb") as file_to_check:
+            # read contents of the file
+            for block in iter(lambda: file_to_check.read(4096), b''):
+                md5.update(block)
+    else:
+        md5.update(data)
 
     return md5.hexdigest()
 
