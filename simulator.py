@@ -98,10 +98,25 @@ def main():
                     compressed_file = filename
                     input('Press any key to continue...')
             elif choice == '2':
-                lzw_comp.compress(filename)
+                filenames = []
+                count = 0
+
+                # Since LZW can't accept standard input, we have to write the binary strings into files to work around it. Append the filenames into a list.
+                for element in original_data:
+                    temp = filename + '_' + str(count)
+                    filenames.append(temp)
+                    with open(temp, "wb") as file_in:
+                        file_in.write(element["data"])
+                        file_in.close()
+                    count = count + 1
+
+                # Compress filenames in the list.
+                for file in filenames:
+                    lzw_comp.compress(file)
+
                 try:
-                    compressed_file = filename + '.Z'
-                    cp_file_size = os.path.getsize(compressed_file)
+                    # compressed_file = file + '.Z'
+                    # cp_file_size = os.path.getsize(compressed_file)
                     input('Press any key to continue...')
                 except:
                     print('File is left uncompressed.')
