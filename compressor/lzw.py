@@ -1,4 +1,4 @@
-import platform, pyRAPL
+import platform, pyRAPL, cpuinfo
 from datetime import datetime
 from os.path import getsize
 from os import system
@@ -12,7 +12,7 @@ class LZW(Compressor):
         self.history = []
     def compress(self, filename):
         start_system_wide()
-        if 'Intel' in platform.processor():
+        if 'Intel' in cpuinfo.get_cpu_info()['brand_raw']:
             pyRAPL.setup()
             meter = pyRAPL.Measurement('bar')
             meter.begin()
@@ -28,10 +28,10 @@ class LZW(Compressor):
 
             compression_ratio = ratio(og_size, cp_size)
         finally:
-            if 'Intel' in platform.processor():
+            if 'Intel' in cpuinfo.get_cpu_info()['brand_raw']:
                 meter.end()
             result = stop()
-            if 'Intel' in platform.processor():
+            if 'Intel' in cpuinfo.get_cpu_info()['brand_raw']:
                 result.append((meter.result.pkg[0]/1000000)/(meter.result.duration/1000000))
                 result.append((meter.result.dram[0]/1000000)/(meter.result.duration/1000000))
             else:

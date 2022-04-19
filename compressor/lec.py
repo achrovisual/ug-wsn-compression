@@ -1,6 +1,6 @@
-import platform, pyRAPL
+import platform, pyRAPL, cpuinfo
 from datetime import datetime
-from os.path import getsize
+from sys import getsizeof
 
 from .compressor import Compressor
 from algorithm.lec import LECAlgorithm
@@ -10,36 +10,36 @@ class LEC(Compressor):
     def __init__(self):
         self.name = 'LEC'
         self.history = []
-    def compress(self, filename):
+    def compress(self, filename, element):
         start()
-        if 'Intel' in platform.processor():
+        if 'Intel' in cpuinfo.get_cpu_info()['brand_raw']:
             pyRAPL.setup()
             meter = pyRAPL.Measurement('bar')
             meter.begin()
         try:
-            compressed_filename = filename + '.lec'
-
             start_time = datetime.now()
 
             compressor = LECAlgorithm()
-            compressor.compress(filename, compressed_filename)
+            compressed_data = compressor.compress(None, element["data"])
 
             end_time = datetime.now()
             time_elapsed = end_time - start_time
 
-            og_size = getsize(filename)
-            cp_size = getsize(compressed_filename)
+            og_size = element["size"]
+            cp_size = getsizeof(compressed_data)
 
             compression_ratio = ratio(og_size, cp_size)
+        except Exception as e:
+            print(e)
         finally:
-            if 'Intel' in platform.processor():
+            if 'Intel' in cpuinfo.get_cpu_info()['brand_raw']:
                 meter.end()
             result = stop()
-            if 'Intel' in platform.processor():
+            if 'Intel' in cpuinfo.get_cpu_info()['brand_raw']:
                 result.append((meter.result.pkg[0]/1000000)/(meter.result.duration/1000000))
                 result.append((meter.result.dram[0]/1000000)/(meter.result.duration/1000000))
             else:
                 result.append(0)
                 result.append(0)
 
-            self.log(filename, time_elapsed, og_size, cp_size, compression_ratio, result)
+            self.log(filename + "_" + str(element["block"]), time_elapsed, og_size, cp_size, compression_ratio, result)
