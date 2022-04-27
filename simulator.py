@@ -14,15 +14,17 @@ def process_data(filename, frequency):
 
     start = 0
     end = frequency - 1
+    count = 0
 
     while not end == len(raw):
 
         temp = b''.join(raw[start:end])
         hash = integrity(None, temp)
-        buffer.append({"size": sys.getsizeof(temp), "checksum": hash, "data": temp})
+        buffer.append({"block": count, "size": sys.getsizeof(temp), "checksum": hash, "data": temp})
 
         start = start + frequency
         end = end + frequency
+        count = count + 1
 
         if end > len(raw):
             end = len(raw)
