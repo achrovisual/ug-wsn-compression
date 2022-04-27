@@ -13,7 +13,7 @@ class Decompressor:
         data = [log_time, filename, self.name, decompression_time, original_size, compressed_size, compression_ratio]
 
         if exists(log_filename):
-            log_file = open(log_filename, 'a')
+            log_file = open(log_filename, 'a', newline='')
             writer = csv.writer(log_file)
             writer.writerow(data)
         else:

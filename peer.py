@@ -12,62 +12,47 @@ xbee = serial.Serial('/dev/ttyUSB0', 9600)
 print(f'[+] Connected to Xbee.')
 
 while True:
-    if xbee.in_waiting > 0:
-        break
-received = xbee.readline().decode()[:-1]
-filename, filesize, md5 = received.split(SEPARATOR)
-filename = os.path.basename(filename)
-filesize = int(filesize)
-ext = os.path.splitext(filename)[-1].lower()
+    while xbee.in_waiting < 0:
+        pass
+    received = xbee.readline().decode()[:-1]
+    print(received)
+    algorithm, filesize, md5 = received.split(SEPARATOR)
+    filesize = int(filesize)
+    data = b''
+    decomp_data = None
 
-progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
-with open(filename, "wb") as f:
+    progress = tqdm.tqdm(range(filesize), f"Receiving sensor readings", unit="B", unit_scale=True, unit_divisor=1024)
+
     while True:
         if xbee.in_waiting > 0:
-            bytes_read = xbee.read()
+            bytes_read = xbee.read(filesize)
             filesize = filesize - len(bytes_read)
-            f.write(bytes_read)
+            data += bytes_read
             progress.update(len(bytes_read))
-        if filesize == 0:
-            break
-    f.close()
-    xbee.close()
-    
-if 'xz' in ext:
-    lzma_comp = LZMA()
-    lzma_comp.decompress(filename)
-    # decompressed_filename = 'LZMA_' + os.path.splitext(filename)[0]
-    decompressed_filename = os.path.splitext(filename)[0]
-    md5_decomp = integrity(decompressed_filename)
-elif 'bz2' in ext:
-    bzip2_comp = bzip2()
-    bzip2_comp.decompress(filename)
-    # decompressed_filename = 'bzip2_' + os.path.splitext(filename)[0]
-    decompressed_filename = os.path.splitext(filename)[0]
-    md5_decomp = integrity(decompressed_filename)
-elif 'gz' in ext:
-    gzip_comp = Gzip()
-    gzip_comp.decompress(filename)
-    # decompressed_filename = 'Gzip_' + os.path.splitext(filename)[0]
-    decompressed_filename = os.path.splitext(filename)[0]
-    md5_decomp = integrity(decompressed_filename)
-elif 'z' in ext:
-    lzw_comp = LZW()
-    lzw_comp.decompress(filename)
-    # decompressed_filename = 'LZW_' + os.path.splitext(filename)[0]
-    decompressed_filename = os.path.splitext(filename)[0]
-    md5_decomp = integrity(decompressed_filename)
-elif 'lec' in ext:
-    lec_comp = LEC()
-    lec_comp.decompress(filename)
-    # decompressed_filename = 'LEC_' + os.path.splitext(filename)[0]
-    decompressed_filename = os.path.splitext(filename)[0]
-    md5_decomp = integrity(decompressed_filename)
+        if filesize <= 0:
+            if algorithm == 'lzma':
+                lzma_comp = LZMA()
+                decomp_data = lzma_comp.decompress(None, data)
+            elif algorithm == 'lzw':
+                with open("temp.Z", "wb") as file_in:
+                    file_in.write(data)
+                lzw_comp = LZW()
+                lzw_comp.decompress(temp)
+                with open('temp', 'rb') as f:
+                    decomp_data = f.read()
+            elif algorithm == 'bzip2':
+                bz_comp = bzip2()
+                decomp_data = bz_comp.decompress(None, data)
+            elif algorithm == 'gzip':
+                gz_comp = Gzip()
+                decomp_data = gz_comp.decompress(None, data)
+            elif algorithm == 'lec':
+                lec_comp = LEC()
+                decomp_data = lec_comp.decompress(None, data)
 
-print()
-print(md5)
-print(md5_decomp)
-if md5 == md5_decomp:
-    print('MD5 verified.')
-else:
-    print('MD5 verification failed!')
+            md5_decomp = integrity(None, decomp_data)
+            if md5 == md5_decomp:
+                print('MD5 verified.')
+            else:
+                print('MD5 verification failed.')
+            break

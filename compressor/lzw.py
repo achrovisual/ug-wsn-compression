@@ -12,10 +12,15 @@ class LZW(Compressor):
         self.history = []
     def compress(self, filename):
         start_system_wide()
-        if 'Intel' in cpuinfo.get_cpu_info()['brand_raw']:
-            pyRAPL.setup()
-            meter = pyRAPL.Measurement('bar')
-            meter.begin()
+        try:
+            if 'Intel' in cpuinfo.get_cpu_info()['brand_raw']:
+                pyRAPL.setup()
+                meter = pyRAPL.Measurement('bar')
+                meter.begin()
+        except Exception as e:
+            pass
+            # print(e)
+            # print("pyRAPL not initialized.")
         try:
             compressed_filename = filename + '.Z'
             og_size = getsize(filename)
@@ -28,13 +33,20 @@ class LZW(Compressor):
 
             compression_ratio = ratio(og_size, cp_size)
         finally:
-            if 'Intel' in cpuinfo.get_cpu_info()['brand_raw']:
-                meter.end()
+            try:
+                if 'Intel' in  cpuinfo.get_cpu_info()['brand_raw']:
+                    meter.end()
+            except:
+                pass
             result = stop()
-            if 'Intel' in cpuinfo.get_cpu_info()['brand_raw']:
-                result.append((meter.result.pkg[0]/1000000)/(meter.result.duration/1000000))
-                result.append((meter.result.dram[0]/1000000)/(meter.result.duration/1000000))
-            else:
+            try:
+                if 'Intel' in  cpuinfo.get_cpu_info()['brand_raw']:
+                    result.append((meter.result.pkg[0]/1000000)/(meter.result.duration/1000000))
+                    result.append((meter.result.dram[0]/1000000)/(meter.result.duration/1000000))
+                else:
+                    result.append(0)
+                    result.append(0)
+            except:
                 result.append(0)
                 result.append(0)
 

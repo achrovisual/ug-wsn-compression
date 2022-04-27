@@ -18,7 +18,7 @@ class Compressor:
         data = [log_time, filename, self.name, compression_time, original_size, compressed_size, compression_ratio, cpu_usage, memory_usage, cpu_power_consumption, ram_power_consumption]
 
         if exists(log_filename):
-            log_file = open(log_filename, 'a')
+            log_file = open(log_filename, 'a', newline='')
             writer = csv.writer(log_file)
             writer.writerow(data)
         else:
