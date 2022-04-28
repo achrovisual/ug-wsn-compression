@@ -13,7 +13,7 @@ def process_data(filename, frequency):
     buffer = []
 
     start = 0
-    end = frequency - 1
+    end = frequency
     count = 0
 
     while not end == len(raw):
