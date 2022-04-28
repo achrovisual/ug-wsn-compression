@@ -25,7 +25,7 @@ while True:
 
     while True:
         if xbee.in_waiting > 0:
-            bytes_read = xbee.read(filesize)
+            bytes_read = xbee.read()
             filesize = filesize - len(bytes_read)
             data += bytes_read
             progress.update(len(bytes_read))
