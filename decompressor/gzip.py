@@ -8,14 +8,14 @@ class Gzip(Decompressor):
     def __init__(self):
         self.name = 'Gzip'
         self.history = []
-        
+
     def decompress(self, filename, data):
         try:
             start_time = datetime.now()
-            
-            cp_size = len(data)
+
+            cp_size = sys.getsizeof(data)
             decompressed_data = gzip.decompress(data)
-            
+
             end_time = datetime.now()
             time_elapsed = end_time - start_time
 

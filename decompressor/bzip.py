@@ -8,19 +8,19 @@ class bzip2(Decompressor):
     def __init__(self):
         self.name = 'bzip2'
         self.history = []
-        
+
     def decompress(self, filename, data):
         try:
             start_time = datetime.now()
-            
-            cp_size = len(data)
+
+            cp_size = sys.getsizeof(data)
             decompressed_data = bz2.decompress(data)
-            
+
             end_time = datetime.now()
             time_elapsed = end_time - start_time
 
             og_size = sys.getsizeof(decompressed_data)
-            
+
             # with open(filename, 'rb') as data:
             #     tarbz2contents = bz2.decompress(data.read())
 

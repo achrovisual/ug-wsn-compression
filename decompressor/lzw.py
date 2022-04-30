@@ -8,9 +8,8 @@ class LZW(Decompressor):
     def __init__(self):
         self.name = 'LZW'
         self.history = []
-    def decompress(self, filename):
+    def decompress(self, filename, decompressed_filename = None):
         try:
-            decompressed_filename = os.path.splitext(filename)[0]
             start_time = datetime.now()
 
             cp_size = getsize(filename)

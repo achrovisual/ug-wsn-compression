@@ -10,11 +10,12 @@ class LZMA(Decompressor):
         self.history = []
     def decompress(self, filename, data):
         try:
+            # print(data)
             start_time = datetime.now()
-            
-            cp_size = len(data)
+
+            cp_size = sys.getsizeof(data)
             decompressed_data = lz.decompress(data)
-            
+
             end_time = datetime.now()
             time_elapsed = end_time - start_time
 
