@@ -78,14 +78,14 @@ class LECAlgorithm:
     # an output file path was not provided, return the compressed data
     return output_buffer
 
-  def decompress(self, input_file_path, data = None, output_file_path=None):
+  def decompress(self, input_file_path, data_ext = None, output_file_path=None):
     data = bitarray(endian='big')
     output_buffer = ''
     prevData = 0
     i = 2
 
     if data_ext:
-        data = data_ext
+        data.frombytes(data_ext)
     else:
         # read the input file
         try:
