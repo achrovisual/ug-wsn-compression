@@ -1,4 +1,4 @@
-import serial, os, datetime, shutil, tqdm, sys
+import serial, os, datetime, shutil, tqdm, sys, time
 from compressor.lzma import LZMA
 from compressor.lzw import LZW
 from compressor.lec import LEC
@@ -95,23 +95,24 @@ def main():
                     xbee.write(compressed)
                     progress.update(sys.getsizeof(compressed))
             elif choice == '2':
-                count = 0
-
                 # Since LZW can't accept standard input, we have to write the binary strings into files to work around it. Append the filenames into a list.
-                for element in original_data:
-                    temp = filename + '_' + str(count)
-                    with open(temp, "wb") as file_in:
-                        file_in.write(element["data"])
-                        file_in.close()
-                    count = count + 1
-                    lzw_comp.compress(temp)
-                    with open(temp+'.Z', 'rb') as f:
-                        data = f.read()
-                        algo = 'lzw'
-                        xbee.write(f'{algo}{SEPARATOR}{sys.getsizeof(data)}{SEPARATOR}{element["checksum"]}\n'.encode())
-                        progress = tqdm.tqdm(range(sys.getsizeof(data)), f'Sending {frequency} readings', unit="B", unit_scale=True, unit_divisor=1024)
-                        xbee.write(data)
-                        progress.update(sys.getsizeof(data))
+                for index, element in enumerate(original_data, start = 0):
+                    try:
+                        temp = filename + '_' + str(index)
+                        with open(temp, "wb") as file_in:
+                            file_in.write(element["data"])
+                            file_in.close()
+                        lzw_comp.compress(temp)
+                        with open(temp + '.Z', 'rb') as f:
+                            data = f.read()
+                            algo = 'lzw'
+                            xbee.write(f'{algo}{SEPARATOR}{sys.getsizeof(data)}{SEPARATOR}{element["checksum"]}\n'.encode())
+                            progress = tqdm.tqdm(range(sys.getsizeof(data)), f'Sending {frequency} readings', unit="B", unit_scale=True, unit_divisor=1024)
+                            xbee.write(data)
+                            progress.update(sys.getsizeof(data))
+                            f.close()
+                    except Exception as e:
+                        print(e)
             elif choice == '3':
                 for element in original_data:
                     # Compress binary string, output is a dictionary containing compressed file size and the data

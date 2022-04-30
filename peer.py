@@ -15,16 +15,24 @@ count = 0
 while True:
     while xbee.in_waiting < 0:
         pass
-    received = xbee.readline().decode()[:-1]
+    received = xbee.readline()
+    print(received)
+    received = received.decode()[:-1]
     print(received)
     algorithm, filesize, md5 = received.split(SEPARATOR)
-    filesize = int(filesize) + 16
+    if algorithm != 'lec':
+        filesize = int(filesize) + 16
+    else:
+        filesize = int(filesize) -24
     data = b''
     decomp_data = None
 
     # print(filesize)
 
     progress = tqdm.tqdm(range(filesize), f"Receiving sensor readings", unit="B", unit_scale=True, unit_divisor=1024)
+
+    if algorithm != 'lzw':
+        count = 0
 
     while True:
         # print(sys.getsizeof(data))
@@ -37,10 +45,8 @@ while True:
         progress.update(sys.getsizeof(bytes_read))
 
         if filesize == sys.getsizeof(data):
+            print(sys.getsizeof(data))
             # print(data)
-            if algorithm != 'lzw':
-                count = 0
-
             if algorithm == 'lzma':
                 lzma_comp = LZMA()
                 decomp_data = lzma_comp.decompress(None, data)
@@ -50,12 +56,14 @@ while True:
                 with open(temp+'.Z', "wb") as file_in:
                     file_in.write(data)
                     file_in.close()
-                count = count + 1
+
                 lzw_comp = LZW()
                 lzw_comp.decompress(temp+'.Z', temp)
 
                 with open(temp, 'rb') as f:
                     decomp_data = f.read()
+
+                count = count + 1
             elif algorithm == 'bzip2':
                 bz_comp = bzip2()
                 decomp_data = bz_comp.decompress(None, data)
