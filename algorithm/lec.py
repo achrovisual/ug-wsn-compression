@@ -141,7 +141,7 @@ class LECAlgorithm:
       except IOError:
         print('Could not write to output file path. Please check if the path is correct ...')
         raise
-    return out_data
+    return output_buffer
 
   def computeBinaryLog(self, diff):
     numBits = 0
