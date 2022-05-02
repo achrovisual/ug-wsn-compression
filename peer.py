@@ -20,10 +20,7 @@ while True:
     received = received.decode()[:-1]
     print(received)
     algorithm, filesize, md5 = received.split(SEPARATOR)
-    if algorithm != 'lec':
-        filesize = int(filesize) + 16
-    else:
-        filesize = int(filesize) -24
+    filesize = int(filesize) + 16
     data = b''
     decomp_data = None
 
@@ -73,6 +70,9 @@ while True:
             elif algorithm == 'lec':
                 lec_comp = LEC()
                 decomp_data = lec_comp.decompress(None, data)
+                decomp_data = decomp_data.encode()
+
+            print(decomp_data)
 
             md5_decomp = integrity(None, decomp_data)
             if md5 == md5_decomp:

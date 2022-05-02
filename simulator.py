@@ -135,8 +135,10 @@ def main():
                 for element in original_data:
                     # Compress binary string, output is a dictionary containing compressed file size and the data
                     compressed = lec_comp.compress(filename, element)
+                    print(bytes(compressed))
+                    # print(sys.getsizeof(compressed))
                     algo = 'lec'
-                    xbee.write(f'{algo}{SEPARATOR}{sys.getsizeof(compressed)}{SEPARATOR}{element["checksum"]}\n'.encode())
+                    xbee.write(f'{algo}{SEPARATOR}{sys.getsizeof(bytes(compressed))}{SEPARATOR}{element["checksum"]}\n'.encode())
                     progress = tqdm.tqdm(range(sys.getsizeof(compressed)), f'Sending {frequency} readings', unit="B", unit_scale=True, unit_divisor=1024)
                     xbee.write(compressed)
                     progress.update(sys.getsizeof(compressed))
