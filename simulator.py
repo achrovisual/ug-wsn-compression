@@ -15,20 +15,33 @@ def process_data(filename, frequency):
     start = 0
     end = frequency
     count = 0
+    holder = 0
 
     while not end == len(raw):
-
+        if holder != 0:
+            end = end + holder
+        else:
+            holder = 0
+        # print(len(raw))
         temp = b''.join(raw[start:end])
         hash = integrity(None, temp)
         buffer.append({"block": count, "size": sys.getsizeof(temp), "checksum": hash, "data": temp})
 
-        start = start + frequency
-        end = end + frequency
-        count = count + 1
+        if end != len(raw):
+            start = start + frequency
+            end = end + frequency
+            count = count + 1
 
         if end > len(raw):
-            end = len(raw)
-            # print(start - end)
+            print(end)
+            holder = len(raw) - end
+            # end = end - (len(raw) - holder)
+            # holder = end
+            print(holder)
+            print(end)
+
+        # print(len(buffer[0]))
+        # print(buffer[0])
 
     return buffer
 
@@ -70,6 +83,7 @@ def main():
             # List elements are dictionary objects. The structure is as follows:
             # {"block": value, "size": value, "checksum"" value, "data": value}
             original_data = process_data(filename, frequency)
+            print(len(original_data))
 
             og_file_size = os.path.getsize(filename)
 
