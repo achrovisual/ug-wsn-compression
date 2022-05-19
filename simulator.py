@@ -13,35 +13,21 @@ def process_data(filename, frequency):
     buffer = []
 
     start = 0
-    end = frequency
+    end = frequency - 1
     count = 0
     holder = 0
 
-    while not end == len(raw):
-        if holder != 0:
-            end = end + holder
-        else:
-            holder = 0
-        # print(len(raw))
+    while True:
         temp = b''.join(raw[start:end])
         hash = integrity(None, temp)
         buffer.append({"block": count, "size": sys.getsizeof(temp), "checksum": hash, "data": temp})
 
-        if end != len(raw):
-            start = start + frequency
-            end = end + frequency
-            count = count + 1
+        start = end + 1
+        end = start + frequency - 1
+        count = count + 1
 
-        if end > len(raw):
-            print(end)
-            holder = len(raw) - end
-            # end = end - (len(raw) - holder)
-            # holder = end
-            print(holder)
-            print(end)
-
-        # print(len(buffer[0]))
-        # print(buffer[0])
+        if end > len(raw) - 1:
+            break
 
     return buffer
 
